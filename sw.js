@@ -1,4 +1,4 @@
-const CACHE_NAME = "arccos-input-v1";
+const CACHE_NAME = "arccos-input-v2";
 const APP_ASSETS = [
   "./",
   "./index.html",
@@ -6,18 +6,7 @@ const APP_ASSETS = [
   "./app.js",
   "./manifest.webmanifest",
   "./icon-512.png",
-  "./icon.png",
-  "./Driver.png",
-  "./3 wood.png",
-  "./4 wood.png",
-  "./7 wood.png",
-  "./7 iron.png",
-  "./8 iron.png",
-  "./9 iron.png",
-  "./Gap wedge.png",
-  "./Gap wedge 48 degrees.png",
-  "./PW.png",
-  "./SW.png"
+  "./icon.png"
 ];
 
 self.addEventListener("install", (event) => {

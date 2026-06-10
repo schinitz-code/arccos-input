@@ -103,17 +103,6 @@
               </div>
               <input type="hidden" name="teeClub" id="teeClubInput" />
               <div class="club-picker" id="teeClubPicker"></div>
-              <div class="field">
-                <span>Where it ended up</span>
-                <input type="hidden" name="teeOutcome" id="teeOutcomeInput" />
-                <div id="teeOutcomeGroup" class="option-grid option-grid-two"></div>
-              </div>
-
-              <div class="field">
-                <span>Result</span>
-                <input type="hidden" name="shotResult" id="shotResultInput" />
-                <div id="shotResultGroup" class="option-grid option-grid-two"></div>
-              </div>
             </div>
 
             <div class="entry-section is-hidden" id="secondShotSection">
@@ -126,17 +115,6 @@
                 <input type="hidden" name="secondShotClub" id="secondShotClubInput" />
                 <div id="secondShotClubGroup" class="option-grid option-grid-clubs"></div>
               </div>
-
-              <div class="field">
-                <span>Where it ended up</span>
-                <input type="hidden" name="secondShotOutcome" id="secondShotOutcomeInput" />
-                <div id="secondShotOutcomeGroup" class="option-grid option-grid-two"></div>
-              </div>
-
-              <fieldset class="rating-fieldset">
-                <legend>Strike rating</legend>
-                <div id="secondShotStrikeRatingGroup" class="rating-row"></div>
-              </fieldset>
             </div>
 
             <div class="entry-section">
@@ -144,87 +122,10 @@
                 <p class="section-kicker">Approach Shot</p>
                 <h3>Into the scoring zone</h3>
               </div>
-              <div class="field-grid">
-                <label class="field">
-                  <span>Approach distance (yards)</span>
-                  <input
-                    type="number"
-                    name="approachDistance"
-                    min="1"
-                    max="400"
-                    required
-                  />
-                </label>
-
-                <div class="field field-span-full">
-                  <span>Approach club</span>
-                  <input type="hidden" name="approachClub" id="approachClubInput" />
-                  <div id="approachClubGroup" class="option-grid option-grid-clubs"></div>
-                </div>
-
-                <div class="field field-span-full">
-                  <span>Approach result</span>
-                  <input type="hidden" name="approachOutcome" id="approachOutcomeInput" />
-                  <div id="approachOutcomeGroup" class="option-grid option-grid-two"></div>
-                </div>
-              </div>
-
-              <fieldset class="rating-fieldset">
-                <legend>Strike rating</legend>
-                <div id="strikeRatingGroup" class="rating-row"></div>
-              </fieldset>
-
-              <div class="field">
-                <span>Add another shot?</span>
-                <input type="hidden" name="addAnotherShot" id="addAnotherShotInput" />
-                <div id="addAnotherShotGroup" class="option-grid option-grid-two"></div>
-              </div>
-            </div>
-
-            <div class="entry-section is-hidden" id="extraApproachSection">
-              <div class="entry-header">
-                <p class="section-kicker">Additional Shot</p>
-                <h3>One more shot in</h3>
-              </div>
-              <div class="field-grid">
-                <label class="field">
-                  <span>Shot distance (yards)</span>
-                  <input
-                    type="number"
-                    name="extraApproachDistance"
-                    min="1"
-                    max="250"
-                  />
-                </label>
-
-                <div class="field field-span-full">
-                  <span>Shot club</span>
-                  <input type="hidden" name="extraApproachClub" id="extraApproachClubInput" />
-                  <div id="extraApproachClubGroup" class="option-grid option-grid-clubs"></div>
-                </div>
-
-                <div class="field field-span-full">
-                  <span>Shot result</span>
-                  <input type="hidden" name="extraApproachOutcome" id="extraApproachOutcomeInput" />
-                  <div id="extraApproachOutcomeGroup" class="option-grid option-grid-two"></div>
-                </div>
-              </div>
-
-              <fieldset class="rating-fieldset">
-                <legend>Strike rating</legend>
-                <div id="extraApproachStrikeRatingGroup" class="rating-row"></div>
-              </fieldset>
-            </div>
-
-            <div class="entry-section is-hidden" id="chipSection">
-              <div class="entry-header">
-                <p class="section-kicker">Chip Shot</p>
-                <h3>Which club did you use?</h3>
-              </div>
               <div class="field field-span-full">
-                <span>Chip club</span>
-                <input type="hidden" name="chipClub" id="chipClubInput" />
-                <div id="chipClubGroup" class="option-grid option-grid-clubs"></div>
+                <span>Approach club</span>
+                <input type="hidden" name="approachClub" id="approachClubInput" />
+                <div id="approachClubGroup" class="option-grid option-grid-clubs"></div>
               </div>
             </div>
 
@@ -233,29 +134,10 @@
                 <p class="section-kicker">Putting</p>
                 <h3>Finish the hole</h3>
               </div>
-              <div class="field-grid">
-                <label class="field">
-                  <span>First putt distance (feet)</span>
-                  <input
-                    type="number"
-                    name="firstPuttDistance"
-                    min="0"
-                    max="200"
-                    required
-                  />
-                </label>
-
-                <div class="field">
-                  <span>Number of putts</span>
-                  <input type="hidden" name="putts" id="puttsInput" />
-                  <div id="puttsGroup" class="option-grid option-grid-four"></div>
-                </div>
-
-                <div class="field">
-                  <span>Make &lt;6'</span>
-                  <input type="hidden" name="makeUnderSix" id="makeUnderSixInput" />
-                  <div id="makeUnderSixGroup" class="option-grid option-grid-three"></div>
-                </div>
+              <div class="field">
+                <span>Number of putts</span>
+                <input type="hidden" name="putts" id="puttsInput" />
+                <div id="puttsGroup" class="option-grid option-grid-four"></div>
               </div>
             </div>
 
@@ -270,7 +152,7 @@
                   name="notes"
                   rows="2"
                   maxlength="140"
-                  placeholder="Pulled it slightly, but the strike felt great."
+                  placeholder="Anything you want to remember about this hole."
                 ></textarea>
               </label>
             </div>
@@ -302,7 +184,7 @@
           <div class="club-report-header">
             <div>
               <p class="section-kicker">Club Report</p>
-              <h3>Approach club trends</h3>
+              <h3>Approach club usage</h3>
             </div>
           </div>
 
@@ -348,7 +230,6 @@
           </label>
         </div>
       </section>
-
     </main>
 
     <template id="historyItemTemplate">
@@ -365,6 +246,6 @@
       </article>
     </template>
 
-    <script src="./app.js?v=20260609-arccos-input" ></script>
+    <script src="./app.js?v=20260609-arccos-input-trimmed"></script>
   </body>
 </html>
