@@ -52,6 +52,7 @@ const approachClubs = [
 
 const parOptions = ["3", "4", "5"];
 const puttOptions = ["0", "1", "2", "3"];
+const additionalShotOptions = ["No", "Yes"];
 
 const form = document.querySelector("#shotForm");
 const roundNameInput = document.querySelector('input[name="roundName"]');
@@ -66,6 +67,11 @@ const secondShotClubInput = document.querySelector("#secondShotClubInput");
 const secondShotClubGroup = document.querySelector("#secondShotClubGroup");
 const approachClubInput = document.querySelector("#approachClubInput");
 const approachClubGroup = document.querySelector("#approachClubGroup");
+const addAnotherShotInput = document.querySelector("#addAnotherShotInput");
+const addAnotherShotGroup = document.querySelector("#addAnotherShotGroup");
+const extraApproachSection = document.querySelector("#extraApproachSection");
+const extraApproachClubInput = document.querySelector("#extraApproachClubInput");
+const extraApproachClubGroup = document.querySelector("#extraApproachClubGroup");
 const puttsInput = document.querySelector("#puttsInput");
 const puttsGroup = document.querySelector("#puttsGroup");
 const historyList = document.querySelector("#historyList");
@@ -95,6 +101,8 @@ function bootstrap() {
   renderOptionGroup(parGroup, parInput, parOptions, "option-button", syncParView);
   renderOptionGroup(secondShotClubGroup, secondShotClubInput, secondShotClubs.map((club) => club.name));
   renderOptionGroup(approachClubGroup, approachClubInput, approachClubs.map((club) => club.name));
+  renderOptionGroup(addAnotherShotGroup, addAnotherShotInput, additionalShotOptions, "option-button", syncAdditionalShotView);
+  renderOptionGroup(extraApproachClubGroup, extraApproachClubInput, approachClubs.map((club) => club.name));
   renderOptionGroup(puttsGroup, puttsInput, puttOptions, "option-button");
 
   form.addEventListener("submit", handleSubmit);
@@ -171,6 +179,16 @@ function syncClubPicker() {
   });
 }
 
+function syncAdditionalShotView() {
+  const showExtraShot = addAnotherShotInput.value === "Yes";
+  extraApproachSection.classList.toggle("is-hidden", !showExtraShot);
+
+  if (!showExtraShot) {
+    extraApproachClubInput.value = "";
+    syncOptionButtons(extraApproachClubGroup, extraApproachClubInput.value);
+  }
+}
+
 function handleSubmit(event) {
   event.preventDefault();
 
@@ -191,6 +209,12 @@ function handleSubmit(event) {
   }
   if (!approachClubInput.value) {
     missingSelections.push("approach club");
+  }
+  if (!addAnotherShotInput.value) {
+    missingSelections.push("add another shot");
+  }
+  if (addAnotherShotInput.value === "Yes" && !extraApproachClubInput.value) {
+    missingSelections.push("additional shot club");
   }
   if (!puttsInput.value) {
     missingSelections.push("number of putts");
@@ -218,6 +242,8 @@ function handleSubmit(event) {
     teeClub: isPar3 ? "N/A (Par 3)" : teeClubInput.value,
     secondShotClub: isPar5 ? secondShotClubInput.value : "N/A",
     approachClub: approachClubInput.value,
+    addAnotherShot: addAnotherShotInput.value,
+    extraApproachClub: addAnotherShotInput.value === "Yes" ? extraApproachClubInput.value : "N/A",
     putts: Number(puttsInput.value),
     notes: normalizeText(data.get("notes"))
   };
@@ -249,14 +275,19 @@ function resetFormWithHole(holeNumber) {
   teeClubInput.value = "";
   secondShotClubInput.value = "";
   approachClubInput.value = "";
+  addAnotherShotInput.value = "No";
+  extraApproachClubInput.value = "";
   puttsInput.value = "2";
 
   syncOptionButtons(parGroup, parInput.value);
   syncOptionButtons(secondShotClubGroup, secondShotClubInput.value);
   syncOptionButtons(approachClubGroup, approachClubInput.value);
+  syncOptionButtons(addAnotherShotGroup, addAnotherShotInput.value);
+  syncOptionButtons(extraApproachClubGroup, extraApproachClubInput.value);
   syncOptionButtons(puttsGroup, puttsInput.value);
   syncClubPicker();
   syncParView();
+  syncAdditionalShotView();
   updateSaveFeedback();
 }
 
@@ -324,10 +355,8 @@ function render() {
 function renderHeroSummary() {
   const latestEntry = getLatestEntry();
   const summaryItems = [
-    { value: String(entries.length), label: "Holes" },
     { value: latestEntry ? `#${latestEntry.hole}` : "-", label: "Last hole" },
-    { value: latestEntry ? `Par ${latestEntry.par}` : "-", label: "Last par" },
-    { value: latestEntry ? `${latestEntry.putts} putts` : "-", label: "Last putting" }
+    { value: latestEntry ? `Par ${latestEntry.par}` : "-", label: "Last par" }
   ];
 
   heroSummary.innerHTML = summaryItems
@@ -350,6 +379,7 @@ function renderStats() {
   const par3Count = entries.filter((entry) => entry.par === 3).length;
   const par4Count = entries.filter((entry) => entry.par === 4).length;
   const par5Count = entries.filter((entry) => entry.par === 5).length;
+  const extraShotCount = entries.filter((entry) => entry.addAnotherShot === "Yes").length;
 
   const stats = [
     { label: "Holes tracked", value: String(entries.length) },
@@ -357,6 +387,7 @@ function renderStats() {
     { label: "Par 3 holes", value: String(par3Count) },
     { label: "Par 4 holes", value: String(par4Count) },
     { label: "Par 5 holes", value: String(par5Count) },
+    { label: "Extra shots logged", value: String(extraShotCount) },
     { label: "Last saved", value: latestEntry ? formatDate(latestEntry.createdAt) : "None" }
   ];
 
@@ -383,16 +414,22 @@ function renderClubReport() {
   const clubTotals = new Map();
 
   entries.forEach((entry) => {
-    const current = clubTotals.get(entry.approachClub) || {
-      clubName: entry.approachClub,
-      shots: 0
-    };
+    [entry.approachClub, entry.extraApproachClub].forEach((clubName) => {
+      if (!clubName || clubName === "N/A") {
+        return;
+      }
 
-    current.shots += 1;
-    clubTotals.set(entry.approachClub, current);
+      const current = clubTotals.get(clubName) || {
+        clubName,
+        shots: 0
+      };
+
+      current.shots += 1;
+      clubTotals.set(clubName, current);
+    });
   });
 
-  const totalShots = entries.length;
+  const totalShots = [...clubTotals.values()].reduce((sum, club) => sum + club.shots, 0) || 1;
 
   clubReport.innerHTML = [...clubTotals.values()]
     .sort((a, b) => b.shots - a.shots || a.clubName.localeCompare(b.clubName))
@@ -501,6 +538,8 @@ function renderHistory() {
       { label: "Tee club", value: entry.teeClub },
       { label: "2nd shot club", value: entry.secondShotClub || "N/A" },
       { label: "Approach club", value: entry.approachClub },
+      { label: "Add another shot", value: entry.addAnotherShot || "No" },
+      { label: "Additional club", value: entry.extraApproachClub || "N/A" },
       { label: "Putts", value: String(entry.putts) }
     ];
 
@@ -535,6 +574,8 @@ async function exportEntriesAsCsv() {
     "Tee Club",
     "Second Shot Club",
     "Approach Club",
+    "Add Another Shot",
+    "Additional Shot Club",
     "Number Of Putts",
     "Notes"
   ];
@@ -547,6 +588,8 @@ async function exportEntriesAsCsv() {
     entry.teeClub,
     entry.secondShotClub || "N/A",
     entry.approachClub,
+    entry.addAnotherShot || "No",
+    entry.extraApproachClub || "N/A",
     entry.putts,
     entry.notes
   ]);
@@ -599,7 +642,9 @@ function loadEntries() {
           ...entry,
           par: entry.par ? Number(entry.par) : 4,
           putts: entry.putts ? Number(entry.putts) : 0,
-          secondShotClub: entry.secondShotClub || "N/A"
+          secondShotClub: entry.secondShotClub || "N/A",
+          addAnotherShot: entry.addAnotherShot || "No",
+          extraApproachClub: entry.extraApproachClub || "N/A"
         }))
       : [];
   } catch (error) {

@@ -127,6 +127,24 @@
                 <input type="hidden" name="approachClub" id="approachClubInput" />
                 <div id="approachClubGroup" class="option-grid option-grid-clubs"></div>
               </div>
+
+              <div class="field">
+                <span>Add another shot?</span>
+                <input type="hidden" name="addAnotherShot" id="addAnotherShotInput" />
+                <div id="addAnotherShotGroup" class="option-grid option-grid-two"></div>
+              </div>
+            </div>
+
+            <div class="entry-section is-hidden" id="extraApproachSection">
+              <div class="entry-header">
+                <p class="section-kicker">Additional Shot</p>
+                <h3>One more shot in</h3>
+              </div>
+              <div class="field field-span-full">
+                <span>Shot club</span>
+                <input type="hidden" name="extraApproachClub" id="extraApproachClubInput" />
+                <div id="extraApproachClubGroup" class="option-grid option-grid-clubs"></div>
+              </div>
             </div>
 
             <div class="entry-section">
@@ -246,6 +264,6 @@
       </article>
     </template>
 
-    <script src="./app.js?v=20260609-arccos-input-trimmed"></script>
+    <script src="./app.js?v=20260610-arccos-input-add-another-shot"></script>
   </body>
 </html>
