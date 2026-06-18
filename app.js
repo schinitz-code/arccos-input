@@ -2,6 +2,7 @@ const STORAGE_KEY = "arccos-input-entries";
 const ROUND_NAME_STORAGE_KEY = "arccos-input-round-name";
 const ROUND_PLAN_STORAGE_KEY = "arccos-input-round-plan";
 const GENERAL_NOTES_STORAGE_KEY = "arccos-input-general-notes";
+const CURRENT_HOLE_STORAGE_KEY = "arccos-input-current-hole";
 
 const teeClubs = [
   { name: "Driver" },
@@ -113,6 +114,7 @@ function bootstrap() {
   historyList.addEventListener("click", handleDeleteClick);
   roundPlanInput.addEventListener("input", handleRoundPlanInput);
   generalNotesInput.addEventListener("input", handleGeneralNotesInput);
+  holeInput.addEventListener("input", handleHoleInput);
   navButtons.forEach((button) => {
     button.addEventListener("click", () => switchView(button.dataset.viewTarget));
   });
@@ -121,7 +123,7 @@ function bootstrap() {
   roundNameInput.value = loadSavedRoundName();
   roundPlanInput.value = loadSavedRoundPlan();
   generalNotesInput.value = loadSavedGeneralNotes();
-  resetForm();
+  resetFormWithHole(getResumeHoleNumber());
   updateSaveFeedback();
   registerServiceWorker();
   render();
@@ -262,15 +264,18 @@ function handleSubmit(event) {
 }
 
 function resetForm() {
-  resetFormWithHole(1);
+  const currentHole = Number(holeInput.value) || getResumeHoleNumber();
+  resetFormWithHole(currentHole);
 }
 
 function resetFormWithHole(holeNumber) {
   const savedRoundName = loadSavedRoundName();
+  const normalizedHole = Math.min(Math.max(Number(holeNumber) || 1, 1), 18);
 
   form.reset();
   roundNameInput.value = savedRoundName;
-  holeInput.value = String(Math.min(Math.max(holeNumber, 1), 18));
+  holeInput.value = String(normalizedHole);
+  saveCurrentHole(normalizedHole);
   parInput.value = "4";
   teeClubInput.value = "";
   secondShotClubInput.value = "";
@@ -304,6 +309,7 @@ function clearAllEntries() {
 
   entries = [];
   persistEntries();
+  resetFormWithHole(1);
   updateSaveFeedback();
   render();
   switchView("entryPanel");
@@ -342,6 +348,14 @@ function handleRoundPlanInput() {
 
 function handleGeneralNotesInput() {
   saveGeneralNotes(generalNotesInput.value);
+}
+
+function handleHoleInput() {
+  const hole = Number(holeInput.value);
+
+  if (Number.isInteger(hole) && hole >= 1 && hole <= 18) {
+    saveCurrentHole(hole);
+  }
 }
 
 function render() {
@@ -680,6 +694,18 @@ function loadSavedGeneralNotes() {
   }
 }
 
+function loadSavedCurrentHole() {
+  try {
+    const savedHole = Number(localStorage.getItem(CURRENT_HOLE_STORAGE_KEY));
+    return Number.isInteger(savedHole) && savedHole >= 1 && savedHole <= 18
+      ? savedHole
+      : null;
+  } catch (error) {
+    console.error("Unable to load current hole", error);
+    return null;
+  }
+}
+
 function saveRoundName(value) {
   try {
     localStorage.setItem(ROUND_NAME_STORAGE_KEY, value);
@@ -701,6 +727,14 @@ function saveGeneralNotes(value) {
     localStorage.setItem(GENERAL_NOTES_STORAGE_KEY, value);
   } catch (error) {
     console.error("Unable to save general notes", error);
+  }
+}
+
+function saveCurrentHole(hole) {
+  try {
+    localStorage.setItem(CURRENT_HOLE_STORAGE_KEY, String(hole));
+  } catch (error) {
+    console.error("Unable to save current hole", error);
   }
 }
 
@@ -726,6 +760,17 @@ function getHistoryEntries() {
 
 function getLatestEntry() {
   return getDisplayEntries()[0] || null;
+}
+
+function getResumeHoleNumber() {
+  const savedHole = loadSavedCurrentHole();
+
+  if (savedHole !== null) {
+    return savedHole;
+  }
+
+  const latestEntry = getLatestEntry();
+  return latestEntry ? Math.min(latestEntry.hole + 1, 18) : 1;
 }
 
 function createEntryId() {
