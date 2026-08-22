@@ -9,38 +9,40 @@ const teeClubs = [
   { name: "Mini Driver" },
   { name: "3 Wood HL" },
   { name: "7 Wood" },
+  { name: "3 Hybrid" },
   { name: "5 Iron" },
   { name: "6 Iron" },
   { name: "7 Iron" },
   { name: "8 Iron" },
   { name: "9 Iron" },
   { name: "Pitching Wedge" },
-  { name: "48 Degree Wedge" },
+  { name: "Gap Wedge" },
   { name: "52 Degree Wedge" },
   { name: "56 Degree Wedge" },
   { name: "60 Degree Wedge" }
-];
+  ];
 
 const secondShotClubs = [
   { name: "3 Wood HL" },
   { name: "7 Wood" },
+  { name: "3 Hybrid" },
   { name: "5 Iron" },
   { name: "6 Iron" },
   { name: "7 Iron" },
   { name: "8 Iron" },
   { name: "9 Iron" },
   { name: "Pitching Wedge" },
-  { name: "48 Degree Wedge" },
+  { name: "Gap Wedge" },
   { name: "52 Degree Wedge" },
   { name: "56 Degree Wedge" },
   { name: "60 Degree Wedge" }
-];
+  ];
 
 const approachClubs = [
   { name: "60 Degree Wedge" },
   { name: "56 Degree Wedge" },
   { name: "52 Degree Wedge" },
-  { name: "48 Degree Wedge" },
+  { name: "Gap Wedge" },
   { name: "Pitching Wedge" },
   { name: "9 Iron" },
   { name: "8 Iron" },
@@ -48,8 +50,9 @@ const approachClubs = [
   { name: "6 Iron" },
   { name: "5 Iron" },
   { name: "7 Wood" },
+  { name: "3 Hybrid" },
   { name: "3 Wood HL" }
-];
+  ];
 
 const parOptions = ["3", "4", "5"];
 const puttOptions = ["0", "1", "2", "3"];
@@ -70,15 +73,11 @@ const approachClubInput = document.querySelector("#approachClubInput");
 const approachClubGroup = document.querySelector("#approachClubGroup");
 const addAnotherShotInput = document.querySelector("#addAnotherShotInput");
 const addAnotherShotGroup = document.querySelector("#addAnotherShotGroup");
-const extraApproachSection = document.querySelector("#extraApproachSection");
-const extraApproachClubInput = document.querySelector("#extraApproachClubInput");
-const extraApproachClubGroup = document.querySelector("#extraApproachClubGroup");
+const additionalShotsContainer = document.querySelector("#additionalShotsContainer");
 const puttsInput = document.querySelector("#puttsInput");
 const puttsGroup = document.querySelector("#puttsGroup");
 const historyList = document.querySelector("#historyList");
 const emptyState = document.querySelector("#emptyState");
-const statsGrid = document.querySelector("#statsGrid");
-const clubReport = document.querySelector("#clubReport");
 const heroSummary = document.querySelector("#heroSummary");
 const startRoundButton = document.querySelector("#startRoundButton");
 const resetFormButton = document.querySelector("#resetFormButton");
@@ -93,6 +92,7 @@ const navButtons = document.querySelectorAll(".mobile-nav-button");
 const panels = document.querySelectorAll(".dashboard, .dashboard-panel");
 
 let entries = loadEntries();
+let additionalShots = [];
 let currentView = "entryPanel";
 
 bootstrap();
@@ -103,7 +103,6 @@ function bootstrap() {
   renderOptionGroup(secondShotClubGroup, secondShotClubInput, secondShotClubs.map((club) => club.name));
   renderOptionGroup(approachClubGroup, approachClubInput, approachClubs.map((club) => club.name));
   renderOptionGroup(addAnotherShotGroup, addAnotherShotInput, additionalShotOptions, "option-button", syncAdditionalShotView);
-  renderOptionGroup(extraApproachClubGroup, extraApproachClubInput, approachClubs.map((club) => club.name));
   renderOptionGroup(puttsGroup, puttsInput, puttOptions, "option-button");
 
   form.addEventListener("submit", handleSubmit);
@@ -183,12 +182,90 @@ function syncClubPicker() {
 
 function syncAdditionalShotView() {
   const showExtraShot = addAnotherShotInput.value === "Yes";
-  extraApproachSection.classList.toggle("is-hidden", !showExtraShot);
+
+  if (showExtraShot && additionalShots.length === 0) {
+      additionalShots = [createAdditionalShot()];
+    }
 
   if (!showExtraShot) {
-    extraApproachClubInput.value = "";
-    syncOptionButtons(extraApproachClubGroup, extraApproachClubInput.value);
-  }
+    additionalShots = [];
+    }
+
+  renderAdditionalShots();
+}
+
+function createAdditionalShot() {
+  return {
+    club: "",
+    addAnotherShot: "No"
+  };
+}
+
+function renderAdditionalShots() {
+  additionalShotsContainer.innerHTML = "";
+
+    additionalShots.forEach((shot, index) => {
+    const section = document.createElement("div");
+    section.className = "entry-section";
+
+    const header = document.createElement("div");
+    header.className = "entry-header";
+    const shotTitle = index === 0 ? "One more shot in" : "Additional shot " + (index + 1);
+    header.innerHTML =
+      '<p class="section-kicker">Additional Shot</p>' +
+      '<h3>' + shotTitle + '</h3>';
+    section.appendChild(header);
+
+    const clubField = document.createElement("div");
+    clubField.className = "field field-span-full";
+    clubField.innerHTML = "<span>Shot club</span>";
+
+    const clubInput = document.createElement("input");
+    clubInput.type = "hidden";
+    clubInput.value = shot.club;
+
+    const clubGroup = document.createElement("div");
+    clubGroup.className = "option-grid option-grid-clubs";
+    renderOptionGroup(clubGroup, clubInput, approachClubs.map((club) => club.name), "option-button", () => {
+      shot.club = clubInput.value;
+    });
+    syncOptionButtons(clubGroup, clubInput.value);
+
+    clubField.appendChild(clubInput);
+    clubField.appendChild(clubGroup);
+    section.appendChild(clubField);
+
+    const anotherField = document.createElement("div");
+    anotherField.className = "field";
+    anotherField.innerHTML = "<span>Add another shot?</span>";
+
+    const anotherInput = document.createElement("input");
+    anotherInput.type = "hidden";
+    anotherInput.value = shot.addAnotherShot || "No";
+
+    const anotherGroup = document.createElement("div");
+    anotherGroup.className = "option-grid option-grid-two";
+    renderOptionGroup(anotherGroup, anotherInput, additionalShotOptions, "option-button", () => {
+      shot.addAnotherShot = anotherInput.value;
+
+      if (shot.addAnotherShot === "Yes" && index === additionalShots.length - 1) {
+        additionalShots.push(createAdditionalShot());
+      }
+
+      if (shot.addAnotherShot === "No") {
+        additionalShots = additionalShots.slice(0, index + 1);
+      }
+
+      renderAdditionalShots();
+    });
+    syncOptionButtons(anotherGroup, anotherInput.value);
+
+    anotherField.appendChild(anotherInput);
+    anotherField.appendChild(anotherGroup);
+    section.appendChild(anotherField);
+
+    additionalShotsContainer.appendChild(section);
+  });
 }
 
 function handleSubmit(event) {
@@ -196,7 +273,7 @@ function handleSubmit(event) {
 
   if (!form.reportValidity()) {
     return;
-  }
+    }
 
   const par = Number(parInput.value || "4");
   const isPar3 = par === 3;
@@ -205,27 +282,36 @@ function handleSubmit(event) {
 
   if (!isPar3 && !teeClubInput.value) {
     missingSelections.push("tee club");
-  }
+    }
   if (isPar5 && !secondShotClubInput.value) {
     missingSelections.push("second shot club");
-  }
+    }
   if (!approachClubInput.value) {
     missingSelections.push("approach club");
-  }
+    }
   if (!addAnotherShotInput.value) {
     missingSelections.push("add another shot");
-  }
-  if (addAnotherShotInput.value === "Yes" && !extraApproachClubInput.value) {
-    missingSelections.push("additional shot club");
-  }
+    }
+  if (addAnotherShotInput.value === "Yes") {
+    if (!additionalShots.length) {
+      additionalShots = [createAdditionalShot()];
+      renderAdditionalShots();
+    }
+
+    additionalShots.forEach((shot, index) => {
+      if (!shot.club) {
+        missingSelections.push(`additional shot ${index + 1} club`);
+    }
+  });
+}
   if (!puttsInput.value) {
     missingSelections.push("number of putts");
-  }
+    }
 
   if (missingSelections.length) {
     window.alert(`Please select: ${missingSelections.join(", ")}.`);
     return;
-  }
+    }
 
   const data = new FormData(form);
   const submittedRoundName = normalizeText(data.get("roundName"));
@@ -234,6 +320,10 @@ function handleSubmit(event) {
 
   saveRoundName(roundName);
   roundNameInput.value = roundName;
+
+  const additionalShotClubs = addAnotherShotInput.value === "Yes"
+    ? additionalShots.map((shot) => shot.club).filter(Boolean)
+    : [];
 
   const entry = {
     id: createEntryId(),
@@ -245,22 +335,31 @@ function handleSubmit(event) {
     secondShotClub: isPar5 ? secondShotClubInput.value : "N/A",
     approachClub: approachClubInput.value,
     addAnotherShot: addAnotherShotInput.value,
-    extraApproachClub: addAnotherShotInput.value === "Yes" ? extraApproachClubInput.value : "N/A",
+    additionalShotClubs,
+    extraApproachClub: additionalShotClubs[0] || "N/A",
     putts: Number(puttsInput.value),
     notes: normalizeText(data.get("notes"))
   };
 
   entries = [entry, ...entries];
   persistEntries();
-  prepareNextHole(entry.hole + 1);
-  updateSaveFeedback(entry);
-  render();
+
+  let nextHole = entry.hole + 1;
+  let nextView = "entryPanel";
 
   if (entry.hole >= 18) {
-    switchView("statsPanel");
-  } else {
-    switchView("entryPanel");
-  }
+    const finishedRound = window.confirm(
+      "Finished with your round? Tap OK if you are done, or Cancel to continue to hole 1."
+    );
+
+    nextHole = finishedRound ? 18 : 1;
+    nextView = finishedRound ? "historyPanel" : "entryPanel";
+}
+
+  prepareNextHole(nextHole);
+  updateSaveFeedback(entry);
+  render();
+  switchView(nextView);
 }
 
 function resetForm() {
@@ -281,14 +380,13 @@ function resetFormWithHole(holeNumber) {
   secondShotClubInput.value = "";
   approachClubInput.value = "";
   addAnotherShotInput.value = "No";
-  extraApproachClubInput.value = "";
+  additionalShots = [];
   puttsInput.value = "2";
 
   syncOptionButtons(parGroup, parInput.value);
   syncOptionButtons(secondShotClubGroup, secondShotClubInput.value);
   syncOptionButtons(approachClubGroup, approachClubInput.value);
   syncOptionButtons(addAnotherShotGroup, addAnotherShotInput.value);
-  syncOptionButtons(extraApproachClubGroup, extraApproachClubInput.value);
   syncOptionButtons(puttsGroup, puttsInput.value);
   syncClubPicker();
   syncParView();
@@ -305,7 +403,7 @@ function clearAllEntries() {
 
   if (!confirmed) {
     return;
-  }
+    }
 
   entries = [];
   persistEntries();
@@ -327,14 +425,14 @@ function handleDeleteClick(event) {
 
   if (!(target instanceof HTMLButtonElement) || !target.classList.contains("delete-button")) {
     return;
-  }
+    }
 
   const card = target.closest(".history-card");
   const entryId = card?.dataset.entryId;
 
   if (!entryId) {
     return;
-  }
+    }
 
   entries = entries.filter((entry) => entry.id !== entryId);
   persistEntries();
@@ -355,22 +453,19 @@ function handleHoleInput() {
 
   if (Number.isInteger(hole) && hole >= 1 && hole <= 18) {
     saveCurrentHole(hole);
-  }
+    }
 }
 
 function render() {
   renderHeroSummary();
-  renderStats();
   renderHistory();
-  renderClubReport();
   exportButton.disabled = entries.length === 0;
 }
 
 function renderHeroSummary() {
   const latestEntry = getLatestEntry();
   const summaryItems = [
-    { value: latestEntry ? `#${latestEntry.hole}` : "-", label: "Last hole" },
-    { value: latestEntry ? `Par ${latestEntry.par}` : "-", label: "Last par" }
+    { value: latestEntry ? `#${latestEntry.hole}` : "-", label: "Last hole" }
   ];
 
   heroSummary.innerHTML = summaryItems
@@ -385,84 +480,6 @@ function renderHeroSummary() {
     .join("");
 }
 
-function renderStats() {
-  const latestEntry = getLatestEntry();
-  const averagePutts = entries.length
-    ? (entries.reduce((sum, entry) => sum + entry.putts, 0) / entries.length).toFixed(1)
-    : "0.0";
-  const par3Count = entries.filter((entry) => entry.par === 3).length;
-  const par4Count = entries.filter((entry) => entry.par === 4).length;
-  const par5Count = entries.filter((entry) => entry.par === 5).length;
-  const extraShotCount = entries.filter((entry) => entry.addAnotherShot === "Yes").length;
-
-  const stats = [
-    { label: "Holes tracked", value: String(entries.length) },
-    { label: "Avg putts", value: `${averagePutts}` },
-    { label: "Par 3 holes", value: String(par3Count) },
-    { label: "Par 4 holes", value: String(par4Count) },
-    { label: "Par 5 holes", value: String(par5Count) },
-    { label: "Extra shots logged", value: String(extraShotCount) },
-    { label: "Last saved", value: latestEntry ? formatDate(latestEntry.createdAt) : "None" }
-  ];
-
-  statsGrid.innerHTML = stats
-    .map(
-      (stat) => `
-        <article class="stat-card">
-          <p class="stat-label">${stat.label}</p>
-          <p class="stat-value">${stat.value}</p>
-        </article>
-      `
-    )
-    .join("");
-}
-
-function renderClubReport() {
-  if (!entries.length) {
-    clubReport.innerHTML = `
-      <div class="empty-state">Save a few holes to build approach-club usage.</div>
-    `;
-    return;
-  }
-
-  const clubTotals = new Map();
-
-  entries.forEach((entry) => {
-    [entry.approachClub, entry.extraApproachClub].forEach((clubName) => {
-      if (!clubName || clubName === "N/A") {
-        return;
-      }
-
-      const current = clubTotals.get(clubName) || {
-        clubName,
-        shots: 0
-      };
-
-      current.shots += 1;
-      clubTotals.set(clubName, current);
-    });
-  });
-
-  const totalShots = [...clubTotals.values()].reduce((sum, club) => sum + club.shots, 0) || 1;
-
-  clubReport.innerHTML = [...clubTotals.values()]
-    .sort((a, b) => b.shots - a.shots || a.clubName.localeCompare(b.clubName))
-    .map((club) => {
-      const usageRate = Math.round((club.shots / totalShots) * 100);
-      return `
-        <article class="club-report-card">
-          <div class="club-report-card-top">
-            <h4>${club.clubName}</h4>
-            <span class="club-report-meta">${club.shots} shot${club.shots === 1 ? "" : "s"}</span>
-          </div>
-          <div class="club-report-stats">
-            <div class="detail-chip"><strong>Usage</strong>${usageRate}%</div>
-          </div>
-        </article>
-      `;
-    })
-    .join("");
-}
 
 function switchView(targetId) {
   currentView = targetId;
@@ -481,7 +498,7 @@ function applyViewState(targetId) {
     });
     navButtons.forEach((button) => button.classList.remove("is-active"));
     return;
-  }
+    }
 
   panels.forEach((panel) => {
     panel.hidden = panel.id !== targetId;
@@ -497,7 +514,7 @@ function scrollPanelIntoView(targetId) {
 
   if (!targetPanel) {
     return;
-  }
+    }
 
   requestAnimationFrame(() => {
     if (targetId === "entryPanel") {
@@ -521,7 +538,7 @@ function updateSaveFeedback(savedEntry) {
   if (savedEntry) {
     saveFeedback.textContent = `Saved hole ${savedEntry.hole} for ${savedEntry.roundName}.`;
     return;
-  }
+    }
 
   const latestEntry = getLatestEntry();
   saveFeedback.textContent = latestEntry
@@ -553,7 +570,7 @@ function renderHistory() {
       { label: "2nd shot club", value: entry.secondShotClub || "N/A" },
       { label: "Approach club", value: entry.approachClub },
       { label: "Add another shot", value: entry.addAnotherShot || "No" },
-      { label: "Additional club", value: entry.extraApproachClub || "N/A" },
+      { label: "Additional clubs", value: formatAdditionalShotClubs(entry) },
       { label: "Putts", value: String(entry.putts) }
     ];
 
@@ -577,7 +594,7 @@ function renderHistory() {
 async function exportEntriesAsCsv() {
   if (!entries.length) {
     return;
-  }
+    }
 
   const sortedEntries = [...entries].sort((a, b) => a.hole - b.hole);
   const headers = [
@@ -589,7 +606,7 @@ async function exportEntriesAsCsv() {
     "Second Shot Club",
     "Approach Club",
     "Add Another Shot",
-    "Additional Shot Club",
+    "Additional Shot Clubs",
     "Number Of Putts",
     "Notes"
   ];
@@ -603,7 +620,7 @@ async function exportEntriesAsCsv() {
     entry.secondShotClub || "N/A",
     entry.approachClub,
     entry.addAnotherShot || "No",
-    entry.extraApproachClub || "N/A",
+    formatAdditionalShotClubs(entry),
     entry.putts,
     entry.notes
   ]);
@@ -632,7 +649,7 @@ async function exportEntriesAsCsv() {
         return;
       }
     }
-  }
+    }
 
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
@@ -658,13 +675,14 @@ function loadEntries() {
           putts: entry.putts ? Number(entry.putts) : 0,
           secondShotClub: entry.secondShotClub || "N/A",
           addAnotherShot: entry.addAnotherShot || "No",
-          extraApproachClub: entry.extraApproachClub || "N/A"
+          additionalShotClubs: normalizeAdditionalShotClubs(entry),
+          extraApproachClub: normalizeAdditionalShotClubs(entry)[0] || "N/A"
         }))
       : [];
   } catch (error) {
     console.error("Unable to load saved entries", error);
     return [];
-  }
+    }
 }
 
 function loadSavedRoundName() {
@@ -673,7 +691,7 @@ function loadSavedRoundName() {
   } catch (error) {
     console.error("Unable to load saved round name", error);
     return "";
-  }
+    }
 }
 
 function loadSavedRoundPlan() {
@@ -682,7 +700,7 @@ function loadSavedRoundPlan() {
   } catch (error) {
     console.error("Unable to load saved round plan", error);
     return "";
-  }
+    }
 }
 
 function loadSavedGeneralNotes() {
@@ -691,7 +709,7 @@ function loadSavedGeneralNotes() {
   } catch (error) {
     console.error("Unable to load saved general notes", error);
     return "";
-  }
+    }
 }
 
 function loadSavedCurrentHole() {
@@ -703,7 +721,7 @@ function loadSavedCurrentHole() {
   } catch (error) {
     console.error("Unable to load current hole", error);
     return null;
-  }
+    }
 }
 
 function saveRoundName(value) {
@@ -711,7 +729,7 @@ function saveRoundName(value) {
     localStorage.setItem(ROUND_NAME_STORAGE_KEY, value);
   } catch (error) {
     console.error("Unable to save round name", error);
-  }
+    }
 }
 
 function saveRoundPlan(value) {
@@ -719,7 +737,7 @@ function saveRoundPlan(value) {
     localStorage.setItem(ROUND_PLAN_STORAGE_KEY, value);
   } catch (error) {
     console.error("Unable to save round plan", error);
-  }
+    }
 }
 
 function saveGeneralNotes(value) {
@@ -727,7 +745,7 @@ function saveGeneralNotes(value) {
     localStorage.setItem(GENERAL_NOTES_STORAGE_KEY, value);
   } catch (error) {
     console.error("Unable to save general notes", error);
-  }
+    }
 }
 
 function saveCurrentHole(hole) {
@@ -735,7 +753,7 @@ function saveCurrentHole(hole) {
     localStorage.setItem(CURRENT_HOLE_STORAGE_KEY, String(hole));
   } catch (error) {
     console.error("Unable to save current hole", error);
-  }
+    }
 }
 
 function syncParView() {
@@ -748,6 +766,23 @@ function syncParView() {
 
 function normalizeText(value) {
   return String(value || "").trim();
+}
+
+function normalizeAdditionalShotClubs(entry) {
+  if (Array.isArray(entry.additionalShotClubs)) {
+    return entry.additionalShotClubs.filter(Boolean);
+    }
+
+  if (entry.extraApproachClub && entry.extraApproachClub !== "N/A") {
+    return [entry.extraApproachClub];
+    }
+
+  return [];
+}
+
+function formatAdditionalShotClubs(entry) {
+  const clubs = normalizeAdditionalShotClubs(entry);
+  return clubs.length ? clubs.join("; ") : "N/A";
 }
 
 function getDisplayEntries() {
@@ -767,7 +802,7 @@ function getResumeHoleNumber() {
 
   if (savedHole !== null) {
     return savedHole;
-  }
+    }
 
   const latestEntry = getLatestEntry();
   return latestEntry ? Math.min(latestEntry.hole + 1, 18) : 1;
@@ -776,7 +811,7 @@ function getResumeHoleNumber() {
 function createEntryId() {
   if (window.crypto?.randomUUID) {
     return window.crypto.randomUUID();
-  }
+    }
 
   return `entry-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
 }
@@ -811,7 +846,7 @@ function slugifyFileName(value) {
 function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) {
     return;
-  }
+    }
 
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./sw.js").catch((error) => {

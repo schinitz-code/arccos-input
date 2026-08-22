@@ -1,4 +1,4 @@
-const CACHE_NAME = "arccos-input-v4";
+const CACHE_NAME = "arccos-input-v5";
 const APP_ASSETS = [
   "./",
   "./index.html",

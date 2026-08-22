@@ -11,17 +11,16 @@
     <meta name="apple-mobile-web-app-title" content="Arccos Input" />
     <link rel="apple-touch-icon" href="./icon-512.png?v=20260609-arccos-input" />
     <link rel="manifest" href="./manifest.webmanifest?v=20260609-arccos-input" />
-    <link rel="stylesheet" href="./styles.css?v=20260409-notes-history-order" />
+    <link rel="stylesheet" href="./styles.css?v=20260821-arccos-streamlined" />
   </head>
   <body>
     <main class="app-shell">
       <section class="hero hero-top">
         <div class="hero-card hero-stats-card">
-          <p class="hero-card-label">Quick glance</p>
-          <div id="heroSummary" class="hero-summary"></div>
           <button id="startRoundButton" class="ghost-button hero-action-button" type="button">
             Start New Round
           </button>
+          <div id="heroSummary" class="hero-summary hero-summary-single"></div>
         </div>
       </section>
 
@@ -31,9 +30,6 @@
         </button>
         <button class="mobile-nav-button is-active" data-view-target="entryPanel" type="button">
           Entry
-        </button>
-        <button class="mobile-nav-button" data-view-target="statsPanel" type="button">
-          Summary
         </button>
         <button class="mobile-nav-button" data-view-target="historyPanel" type="button">
           History
@@ -135,17 +131,7 @@
               </div>
             </div>
 
-            <div class="entry-section is-hidden" id="extraApproachSection">
-              <div class="entry-header">
-                <p class="section-kicker">Additional Shot</p>
-                <h3>One more shot in</h3>
-              </div>
-              <div class="field field-span-full">
-                <span>Shot club</span>
-                <input type="hidden" name="extraApproachClub" id="extraApproachClubInput" />
-                <div id="extraApproachClubGroup" class="option-grid option-grid-clubs"></div>
-              </div>
-            </div>
+            <div id="additionalShotsContainer"></div>
 
             <div class="entry-section">
               <div class="entry-header">
@@ -185,28 +171,6 @@
               </div>
             </div>
           </form>
-        </div>
-      </section>
-
-      <section class="dashboard-panel" id="statsPanel">
-        <div class="panel panel-stats">
-          <div class="panel-heading">
-            <div>
-              <p class="section-kicker">Performance</p>
-              <h2>Round summary</h2>
-            </div>
-          </div>
-
-          <div id="statsGrid" class="stats-grid"></div>
-
-          <div class="club-report-header">
-            <div>
-              <p class="section-kicker">Club Report</p>
-              <h3>Approach club usage</h3>
-            </div>
-          </div>
-
-          <div id="clubReport" class="club-report-list"></div>
         </div>
       </section>
 
@@ -264,6 +228,6 @@
       </article>
     </template>
 
-    <script src="./app.js?v=20260618-hole-resume-fix"></script>
+    <script src="./app.js?v=20260821-arccos-streamlined-extra-shots"></script>
   </body>
 </html>

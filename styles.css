@@ -84,11 +84,15 @@ body::before {
 }
 
 .hero-action-button {
-  margin-top: 16px;
+  margin-top: 0;
   width: 100%;
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.24);
   color: #fff8ef;
+}
+
+.hero-action-button + .hero-summary {
+  margin-top: 14px;
 }
 
 .eyebrow,
@@ -139,6 +143,10 @@ h3 {
   margin-top: 14px;
 }
 
+.hero-summary-single {
+  grid-template-columns: 1fr;
+}
+
 .hero-summary-item {
   padding: 12px;
   border-radius: 16px;
@@ -165,7 +173,7 @@ h3 {
   top: 10px;
   z-index: 5;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   margin-bottom: 14px;
   padding: 8px;
