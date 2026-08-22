@@ -345,7 +345,7 @@ function handleSubmit(event) {
   persistEntries();
 
   let nextHole = entry.hole + 1;
-  let nextView = "entryPanel";
+  let nextView = currentView === "notesPanel" ? "notesPanel" : "entryPanel";
 
   if (entry.hole >= 18) {
     const finishedRound = window.confirm(
@@ -353,7 +353,7 @@ function handleSubmit(event) {
     );
 
     nextHole = finishedRound ? 18 : 1;
-    nextView = finishedRound ? "historyPanel" : "entryPanel";
+    nextView = finishedRound ? "historyPanel" : nextView;
 }
 
   prepareNextHole(nextHole);
