@@ -17,6 +17,7 @@ const teeClubs = [
   { name: "9 Iron" },
   { name: "Pitching Wedge" },
   { name: "Gap Wedge" },
+  { name: "48 Degree Wedge" },
   { name: "52 Degree Wedge" },
   { name: "56 Degree Wedge" },
   { name: "60 Degree Wedge" }
@@ -33,6 +34,7 @@ const secondShotClubs = [
   { name: "9 Iron" },
   { name: "Pitching Wedge" },
   { name: "Gap Wedge" },
+  { name: "48 Degree Wedge" },
   { name: "52 Degree Wedge" },
   { name: "56 Degree Wedge" },
   { name: "60 Degree Wedge" }
@@ -42,6 +44,7 @@ const approachClubs = [
   { name: "60 Degree Wedge" },
   { name: "56 Degree Wedge" },
   { name: "52 Degree Wedge" },
+  { name: "48 Degree Wedge" },
   { name: "Gap Wedge" },
   { name: "Pitching Wedge" },
   { name: "9 Iron" },
