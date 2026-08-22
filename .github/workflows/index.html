@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arccos Input</title>
+    <meta name="theme-color" content="#24533a" />
+    <meta name="application-name" content="Arccos Input" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Arccos Input" />
+    <link rel="apple-touch-icon" href="./icon-512.png?v=20260609-arccos-input" />
+    <link rel="manifest" href="./manifest.webmanifest?v=20260609-arccos-input" />
+    <link rel="stylesheet" href="./styles.css?v=20260821-arccos-streamlined" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero hero-top">
+        <div class="hero-card hero-stats-card">
+          <button id="startRoundButton" class="ghost-button hero-action-button" type="button">
+            Start New Round
+          </button>
+          <div id="heroSummary" class="hero-summary hero-summary-single"></div>
+        </div>
+      </section>
+
+      <nav class="mobile-nav" aria-label="Primary">
+        <button class="mobile-nav-button" data-view-target="notesPanel" type="button">
+          Notes
+        </button>
+        <button class="mobile-nav-button is-active" data-view-target="entryPanel" type="button">
+          Entry
+        </button>
+        <button class="mobile-nav-button" data-view-target="historyPanel" type="button">
+          History
+        </button>
+      </nav>
+
+      <section class="dashboard-panel" id="notesPanel" hidden>
+        <div class="panel panel-stats">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker">Course Notes</p>
+              <h2>Tee and strategy notes</h2>
+            </div>
+          </div>
+
+          <label class="field">
+            <span>Course notes</span>
+            <textarea
+              id="roundPlanInput"
+              class="round-plan-textarea"
+              placeholder="Paste or write your course notes, tee clubs, and strategy here."
+            ></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="dashboard" id="entryPanel">
+        <div class="panel panel-form">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker">Shot Entry</p>
+              <h2>Add a hole</h2>
+            </div>
+            <button id="resetFormButton" class="ghost-button compact-button" type="button">
+              Reset form
+            </button>
+          </div>
+
+          <form id="shotForm" class="shot-form">
+            <div class="field-grid field-grid-compact">
+              <label class="field">
+                <span>Course / round name</span>
+                <input
+                  type="text"
+                  name="roundName"
+                  placeholder="Augusta National"
+                  maxlength="40"
+                />
+              </label>
+
+              <label class="field">
+                <span>Hole</span>
+                <input type="number" name="hole" min="1" max="18" required />
+              </label>
+
+              <div class="field">
+                <span>Par</span>
+                <input type="hidden" name="par" id="parInput" value="4" />
+                <div id="parGroup" class="option-grid option-grid-three"></div>
+              </div>
+            </div>
+
+            <div class="entry-section" id="teeShotSection">
+              <div class="entry-header">
+                <p class="section-kicker">Tee Shot</p>
+                <h3>Start of the hole</h3>
+              </div>
+              <input type="hidden" name="teeClub" id="teeClubInput" />
+              <div class="club-picker" id="teeClubPicker"></div>
+            </div>
+
+            <div class="entry-section is-hidden" id="secondShotSection">
+              <div class="entry-header">
+                <p class="section-kicker">Second Shot</p>
+                <h3>Advance the hole</h3>
+              </div>
+              <div class="field field-span-full">
+                <span>Second shot club</span>
+                <input type="hidden" name="secondShotClub" id="secondShotClubInput" />
+                <div id="secondShotClubGroup" class="option-grid option-grid-clubs"></div>
+              </div>
+            </div>
+
+            <div class="entry-section">
+              <div class="entry-header">
+                <p class="section-kicker">Approach Shot</p>
+                <h3>Into the scoring zone</h3>
+              </div>
+              <div class="field field-span-full">
+                <span>Approach club</span>
+                <input type="hidden" name="approachClub" id="approachClubInput" />
+                <div id="approachClubGroup" class="option-grid option-grid-clubs"></div>
+              </div>
+
+              <div class="field">
+                <span>Add another shot?</span>
+                <input type="hidden" name="addAnotherShot" id="addAnotherShotInput" />
+                <div id="addAnotherShotGroup" class="option-grid option-grid-two"></div>
+              </div>
+            </div>
+
+            <div id="additionalShotsContainer"></div>
+
+            <div class="entry-section">
+              <div class="entry-header">
+                <p class="section-kicker">Putting</p>
+                <h3>Finish the hole</h3>
+              </div>
+              <div class="field">
+                <span>Number of putts</span>
+                <input type="hidden" name="putts" id="puttsInput" />
+                <div id="puttsGroup" class="option-grid option-grid-four"></div>
+              </div>
+            </div>
+
+            <div class="entry-section">
+              <div class="entry-header">
+                <p class="section-kicker">Notes</p>
+                <h3>Anything to remember?</h3>
+              </div>
+              <label class="field">
+                <span>Notes</span>
+                <textarea
+                  name="notes"
+                  rows="2"
+                  maxlength="140"
+                  placeholder="Anything you want to remember about this hole."
+                ></textarea>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <div class="save-bar">
+                <div>
+                  <p class="save-bar-label">Ready to log this hole?</p>
+                  <p id="saveFeedback" class="save-feedback">Nothing saved yet.</p>
+                </div>
+                <button class="primary-button" type="submit">Save hole</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="dashboard-panel" id="historyPanel">
+        <div class="panel panel-stats">
+          <div class="history-header">
+            <div>
+              <p class="section-kicker">History</p>
+              <h3>Saved holes</h3>
+            </div>
+            <div class="history-actions">
+              <button id="exportButton" class="ghost-button compact-button" type="button">
+                Export CSV
+              </button>
+              <button id="clearAllButton" class="ghost-button compact-button" type="button">
+                Clear all data
+              </button>
+            </div>
+          </div>
+
+          <div id="emptyState" class="empty-state">
+            Add your first hole to start building a pattern.
+          </div>
+          <div id="historyList" class="history-list"></div>
+        </div>
+      </section>
+
+      <section class="hero hero-bottom">
+        <div class="hero-copy">
+          <p class="eyebrow">General Notes</p>
+          <h3>Keep extra notes over time</h3>
+          <label class="field">
+            <span>General notes</span>
+            <textarea
+              id="generalNotesInput"
+              class="general-notes-textarea"
+              placeholder="Add reminders, ideas, patterns, or anything else you want to keep."
+            ></textarea>
+          </label>
+        </div>
+      </section>
+    </main>
+
+    <template id="historyItemTemplate">
+      <article class="history-card">
+        <div class="history-topline">
+          <div>
+            <p class="history-round"></p>
+            <h4 class="history-hole"></h4>
+          </div>
+          <button class="delete-button" type="button">Delete</button>
+        </div>
+        <div class="history-details"></div>
+        <p class="history-notes"></p>
+      </article>
+    </template>
+
+    <script src="./app.js?v=20260822-arccos-add-48-wedge"></script>
+  </body>
+</html>
